@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd
+		 http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.3.xsd">
+    <preConditions>
+        <dbms type="mariadb"/>
+    </preConditions>
+    
+    <changeSet id="1" author="kotkovski">
+        <sqlFile path="src/main/resources/liquibase/db.migration/V1__Create_cars_table.sql"/>
+    </changeSet>
+    <changeSet id="2" author="kotkovski">
+        <sqlFile path="src/main/resources/liquibase/db.migration/V2__Create_customer_table.sql"/>
+    </changeSet>
+    <changeSet id="3" author="kotkovski">
+        <comment>Create table Operations</comment>
+        <sql>CREATE TABLE IF NOT EXISTS `Operations`
+        (
+            `id`           int(11) unsigned NOT NULL AUTO_INCREMENT,
+            `service_list` varchar(255) NOT NULL DEFAULT '',
+            PRIMARY KEY (`id`)
+            )</sql>
+    </changeSet>
+    <changeSet id="4" author="kotkovski">
+        <sql>INSERT INTO `Operations` (`id`, `service_list`)
+             VALUES (1, 'maintenance'),
+                    (2, 'installation_of_additional_equipment'),
+                    (3, 'filling_the_air_conditioning_system'),
+                    (4, 'headlight_repair'),
+                    (5, 'exhaust_system_repair'),
+                    (6, 'steering_repair'),
+                    (7, 'exchange_windows'),
+                    (8, 'engine_repair'),
+                    (9, 'car_painting'),
+                    (10, 'gearbox_repair'),
+                    (11, 'chip_tuning'),
+                    (12, 'write_your_own_version');
+        </sql>
+    </changeSet>
+    <changeSet id="5" author="kotkovski">
+        <comment>Create table Orders</comment>
+        <sql>CREATE TABLE IF NOT EXISTS `Orders`
+             (
+                 `id`                int(11) unsigned NOT NULL AUTO_INCREMENT,
+                 `car_id`            int(11) unsigned DEFAULT NULL,
+                 `start_date`        date                DEFAULT NULL,
+                 `finish_date`       date                DEFAULT NULL,
+                 `mileage`           varchar(6) NOT NULL DEFAULT '',
+                 `repair_request_id` int(11) unsigned DEFAULT NULL,
+                 PRIMARY KEY (`id`),
+                 KEY                 `Select car` (`car_id`),
+                 KEY                 `Select operation` (`repair_request_id`),
+                 CONSTRAINT `Select car` FOREIGN KEY (`car_id`) REFERENCES `Cars` (`id`),
+                 CONSTRAINT `Select operation` FOREIGN KEY (`repair_request_id`) REFERENCES `Operations` (`id`)
+             )</sql>
+    </changeSet>
+    <changeSet id="6" author="kotkovski">
+        <sql>INSERT INTO `Orders` (`id`, `car_id`, `start_date`, `finish_date`, `mileage`, `repair_request_id`)
+             VALUES (1, 1, '2021-08-20', '2021-08-21', '184000', 1),
+                    (2, 4, '2020-03-14', '2020-03-17', '298785', 6),
+                    (3, 2, '2021-04-15', '2021-04-16', '163480', 8),
+                    (4, 6, '2018-05-24', '2018-05-24', '105365', 4),
+                    (5, 5, '2021-10-19', NULL, '441000', 12),
+                    (6, 3, '2021-06-06', '2021-06-08', '538765', 5);
+        </sql>
+    </changeSet>
+</databaseChangeLog>

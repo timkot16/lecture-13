@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+
+  db:
+    image: mariadb:10.6
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: secret
+      MARIADB_DATABASE: car_service
+    ports:
+      - 8080:8080
